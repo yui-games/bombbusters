@@ -400,7 +400,7 @@ function tileHTML(t,isYou){
     return '<div class="tile back'+xc+'">'+xm+'<span class="tk">'+t.n+'</span></div>';
   }
   var cut=(t.cut||t.done)?' cut':'';
-  var tk=(isYou&&t.revealed&&t.t==='Y')?'<span class="tk yel"></span>':((isYou&&t.revealed&&t.t==='B')?'<span class="tk">'+t.n+'</span>':'');
+  var tk=(isYou&&t.revealed&&t.t==='Y')?'<span class="tk yel"></span>':((isYou&&t.revealed&&t.t==='B')?((VIEW&&VIEW.parityInfo)?'<span class="tk par">'+((t.n%2)?'奇':'偶')+'</span>':'<span class="tk">'+t.n+'</span>'):'');
   if(t.t==='B') return '<div class="tile b'+cut+xc+'">'+xm+tk+'<span class="big">'+t.n+'</span></div>';
   if(t.t==='Y') return '<div class="tile y'+cut+xc+'">'+xm+tk+'<span class="big">'+t.n+'.1</span></div>';
   if(t.danger) return '<div class="tile r'+cut+xc+'">'+xm+'<span class="big">'+t.n+'</span></div>';

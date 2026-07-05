@@ -320,7 +320,7 @@ function tileHTML(t,shown){
   if(!shown)return '<div class="tile back"></div>';
   const cut=(t.cut||t.done)?' cut':'';
   // info token only on blue/yellow (赤には情報トークンを置かない)
-  const tk=(t.revealed&&t.t==='Y')?'<span class="tk yel"></span>':((t.revealed&&t.t==='B')?'<span class="tk">'+t.n+'</span>':'');
+  const tk=(t.revealed&&t.t==='Y')?'<span class="tk yel"></span>':((t.revealed&&t.t==='B')?(S.parityInfo?'<span class="tk par">'+((t.n%2)?'奇':'偶')+'</span>':'<span class="tk">'+t.n+'</span>'):'');
   if(t.t==='B')return '<div class="tile b'+cut+'" data-n="'+t.n+'">'+tk+'<span class="big">'+t.n+'</span></div>';
   if(t.t==='Y')return '<div class="tile y'+cut+'">'+tk+'<span class="big">'+t.n+'.1</span></div>';
   return '<div class="tile r'+cut+'"><span class="big">'+t.n+'.5</span></div>';

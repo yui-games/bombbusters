@@ -350,7 +350,7 @@ function tileHTML(t,isYou,showAll){
     return '<div class="tile back'+xc+'">'+xm+'<span class="tk'+((S.parityInfo&&t.t==='B')?' par':'')+'">'+_plbl+'</span></div>';
   }
   const cut=(t.cut||t.done)?' cut':'';
-  const tk=(t.revealed&&t.t==='Y')?'<span class="tk yel"></span>':((t.revealed&&t.t==='B')?'<span class="tk">'+t.n+'</span>':'');
+  const tk=(t.revealed&&t.t==='Y')?'<span class="tk yel"></span>':((t.revealed&&t.t==='B')?(S.parityInfo?'<span class="tk par">'+((t.n%2)?'奇':'偶')+'</span>':'<span class="tk">'+t.n+'</span>'):'');
   if(t.t==='B')return '<div class="tile b'+cut+xc+'" data-n="'+t.n+'">'+xm+tk+'<span class="big">'+t.n+'</span></div>';
   if(t.t==='Y')return '<div class="tile y'+cut+xc+'">'+xm+tk+'<span class="big">'+t.n+'.1</span></div>';
   return (t.danger?('<div class="tile r'+cut+xc+'">'+xm+'<span class="big">'+t.n+'</span></div>'):('<div class="tile r'+cut+xc+'">'+xm+'<span class="big">'+t.n+'.5</span></div>'));
