@@ -183,6 +183,11 @@ body.skin-pop .prow{background:#262a34;}
 .lobby{max-width:520px;margin:0 auto;}
 .lobby .card{padding:14px 16px;}
 .bigcode{font-size:30px;font-weight:900;letter-spacing:4px;color:var(--gold);text-align:center;background:#222c52;border-radius:12px;padding:10px;margin:8px 0;}
+/* 対面用: 画面に出す参加QR（白地でないとカメラが読めない） */
+.qrbox{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 10px 8px;margin:8px 0;text-align:center;}
+#wQr svg{width:min(56vw,210px);height:min(56vw,210px);display:block;margin:0 auto;}
+.qrbox .qs{color:#4d3f1f;font-size:13px;margin-top:6px;font-weight:700;}
+.qrbox .qs2{color:#9a8a67;font-size:11px;margin-top:2px;}
 .plist{display:flex;flex-direction:column;gap:6px;margin:8px 0;}
 .prow{display:flex;justify-content:space-between;background:#fff7e3;border:2px solid var(--line);border-radius:10px;padding:8px 12px;font-weight:800;}
 .prow .seat{color:var(--mut);font-weight:700;}
@@ -250,6 +255,9 @@ body.skin-pop .prow{background:#262a34;}
   <div class="card">
     <div id="wshare"><div class="muted" style="text-align:center">この部屋コードを仲間に伝えてね</div>
     <div class="bigcode" id="wcode">----</div></div>
+    <div class="qrbox" id="wQrBox"><div id="wQr"></div>
+      <div class="qs">📷 スマホのカメラで読み取ると、この部屋に入れます</div>
+      <div class="qs2">💻 PCの人は「部屋コードで参加」に上のコードを入力</div></div>
     <div class="btnrow" id="shareRow"><button class="sec" onclick="shareLink()">参加リンクをコピー</button></div>
     <div class="note" id="sharemsg"></div>
     <div class="plist" id="wplist"></div>
@@ -284,6 +292,7 @@ body.skin-pop .prow{background:#262a34;}
 <div id="helpmodal" class="hidden"><div class="eqbox" style="max-height:82vh;overflow:auto"><div id="helpbody"></div><div class="btnrow"><button class="ghost" onclick="closeHelp()">閉じる</button></div></div></div>
 <div id="eqmodal" class="hidden"><div class="eqbox"><div id="eqtitle" class="eqtitle"></div><div id="eqbody"></div><div class="btnrow" id="eqfoot"></div></div></div>
 
+<script src="qr.js"></script>
 <script>
 /* サーバーURLは既定値を持たせる。毎回入力・記憶しなくてよいように。 */
 var SRV_DEFAULT='https://bombbusters-server.ryo5exeg.workers.dev';
@@ -357,7 +366,20 @@ function joinRoom(){
   .catch(function(){err('参加できませんでした。URL/コードを確認してね');});
 }
 function saveSession(){try{localStorage.setItem('bb_online',JSON.stringify({SRV:SRV,CODE:CODE,PID:PID}));}catch(e){}}
-function enterWaiting(){saveSession();show('waiting');g('wcode').textContent=CODE;startPoll();}
+function enterWaiting(){saveSession();show('waiting');g('wcode').textContent=CODE;renderQr();startPoll();}
+/* 対面用の参加QR（qr.js未読込なら箱を隠すだけ） */
+function renderQr(){
+  var el=g('wQr'); if(!el)return;
+  if(typeof qrcode!=='function'){g('wQrBox').style.display='none';return;}
+  if(el.getAttribute('data-code')===CODE)return;
+  var u=location.origin+location.pathname+'?code='+CODE+(SRV!==SRV_DEFAULT?'&server='+encodeURIComponent(SRV):'');
+  try{
+    var q=qrcode(0,'M'); q.addData(u); q.make();
+    el.innerHTML=q.createSvgTag({cellSize:6,margin:3,scalable:true});
+    el.setAttribute('data-code',CODE);
+    g('wQrBox').style.display='';
+  }catch(e){g('wQrBox').style.display='none';}
+}
 function tryReconnect(sv){SRV=sv.SRV;CODE=sv.CODE;PID=sv.PID;api('/api/room/'+CODE+'/state?playerId='+PID).then(function(r){if(r&&r.ok&&r.you>=0){ROOM=r.room;MYSEAT=r.you;startPoll();}else{localStorage.removeItem('bb_online');show('lobby');}}).catch(function(){localStorage.removeItem('bb_online');show('lobby');});}
 function startGame(){api('/api/room/'+CODE+'/start','POST',{playerId:PID}).then(function(r){if(r.error)err(r.error);});}
 function leaveGame(){stopPoll();try{localStorage.removeItem('bb_online');}catch(e){}show('lobby');}
@@ -380,7 +402,7 @@ function tick(){
   api('/api/room/'+CODE+'/state?playerId='+PID).then(function(r){
     failCount=0;g('connbar').classList.add('hidden');
     if(!r.error){ROOM=r.room;MYSEAT=r.you;REV=r.rev||0;
-      if(!r.started){renderWaiting();show('waiting');}
+      if(!r.started){renderWaiting();show('waiting');renderQr();}
       else{VIEW=r.view;show('game');renderGame();}
     }
   }).catch(function(){failCount++;if(failCount>=3)g('connbar').classList.remove('hidden');}).then(function(){if(polling)poll=setTimeout(tick,failCount>=3?2000:nextDelay());});
