@@ -318,7 +318,7 @@ function eqHelpListHTML(){return EQORDER.map(function(k){var h=EQHELP[k];return 
 var GUIDE_HTML='<div class="eqtitle">あそびかた</div>'
 +'<div class="sect"><div class="t">目的</div><div class="muted">みんなで協力して、すべての<b>青の配線</b>を切断するのがゴール。黄の配線も処理し、<b>赤の配線には触らない</b>こと。ライフ（❤）が0になる前にクリアを目指します。</div></div>'
 +'<div class="sect"><div class="t">手番でできること</div><div class="muted">・<b>切断（2人）</b>：自分が持つ数字のコード１本と、仲間が持つ同じ数字のコード１本を狙って宣言。当たれば自分の分と合わせて2本切れる。外すと残機が１減り、宣言されたプレイヤーは指定されたコードに情報トークンを置く。<br>・<b>切断（1人）</b>：すでに同じ数字が１組（２本）切断されていて、残りの２本を持っているとき、単独でその２本を切断できる。同じ数字を４本持っているときは、一度に４本切断ができる。<br>・<b>フツーノ探知機</b>：仲間の持つコード2本に対して、数字をひとつ宣言する。その後の動きは２人での切断と同様だが、同じ数字２本のうちどちらを切るかや外したとき情報トークンをどちらに置くかは宣言されたプレイヤーが選ぶことができる。宣言したコードに赤が含まれていてもゲームは終了しない。</div></div>'
-+'<div class="sect"><div class="t">情報の見方</div><div class="muted">・コードの上の<b>白いタブ</b>＝情報トークン（その位置の数字のヒント）。<br>・<b>＝ / ≠</b>＝ラベル。隣り合う2本が「同じ／違う数字」という意味。<br>・名前の横の<b>「切断中」</b>＝その人は接続が切れAIが代わりに操作中。</div></div>'
++'<div class="sect"><div class="t">情報の見方</div><div class="muted">・コードの上の<b>白いタブ</b>＝情報トークン（その位置の数字のヒント）。<br>・<b>＝ / ≠</b>＝ラベル。隣り合う2本が「同じ／違う数字」という意味。<br>・名前の横の<b>「📶応答なし」</b>＝その人は通信が切れて操作待ち。ホストが「AIに代行させる」を押すとAIが代わりに操作し<b>「📶AI代行中」</b>になる（本人が開き直せば復帰）。</div></div>'
 +'<div class="sect"><div class="t">ボードの見方</div><div class="muted">・1〜12の数字が<b>緑</b>になったら、その数字は切断完了。<br>・数字の間の <b>●</b>＝赤がある、<b>▬</b>＝黄がある、<b>？</b>＝そのあたりに未確定の赤/黄。</div></div>';
 function openHelp(){g('helpbody').innerHTML=GUIDE_HTML+'<div class="sect"><div class="t">装備カード（全13種）</div></div>'+eqHelpListHTML();g('helpmodal').classList.remove('hidden');}
 function showEqHelp(kind){var h=EQHELP[kind];if(!h){openHelp();return;}g('helpbody').innerHTML='<div class="eqtitle">'+h[0]+'</div><div class="muted" style="line-height:1.7;font-size:14px">'+h[1]+'</div><div class="btnrow"><button class="sec" onclick="openHelp()">ルールと全カードを見る</button></div>';g('helpmodal').classList.remove('hidden');}
@@ -411,10 +411,23 @@ function renderWaiting(){
   var n=ROOM.players.length, cap=ROOM.pcount;
   g('wplist').innerHTML=ROOM.players.map(function(p){return '<div class="prow"><span>'+p.name+(p.seat===MYSEAT?'<span class="you-badge">YOU</span>':'')+'</span><span class="seat">席'+(p.seat+1)+'</span></div>';}).join('');
   g('wstatus').textContent='参加 '+n+' / 定員 '+cap+'（不足分はAIが入ります）';
-  var isHost=ROOM.host && ROOM.players.find(function(p){return p.seat===MYSEAT;}) && ROOM.host===PID;
+  var isHost=(ROOM.hostSeat!==undefined)?(ROOM.hostSeat===MYSEAT):(ROOM.host===PID);
   g('startBtn').classList.toggle('hidden', !isHost);
   g('shareRow').classList.toggle('hidden', !isHost);
   g('wshare').classList.toggle('hidden', !isHost);
+}
+/* AI代行の許可ボタンを出せる人＝ホスト。ホスト自身が通信切断中なら誰でも */
+function canApproveAi(){
+  if(!ROOM||ROOM.hostSeat===undefined)return false;
+  if(ROOM.hostSeat===MYSEAT)return true;
+  var hp=null;(ROOM.players||[]).forEach(function(p){if(p.seat===ROOM.hostSeat)hp=p;});
+  return !!(hp&&!hp.connected);
+}
+function approveAi(seat,name){
+  if(!confirm(name+' さんは通信が切れています。\nAIに代行させますか？\n（本人がページを開き直せばいつでも復帰できます）'))return;
+  api('/api/room/'+CODE+'/aiok','POST',{playerId:PID,seat:seat}).then(function(r){
+    if(r.error)toast(r.error);tick();
+  }).catch(function(){toast('送信できませんでした');});
 }
 
 /* ---------- game render (from server view) ---------- */
@@ -477,7 +490,13 @@ function renderGame(){
     var seat=document.createElement('div');seat.className='seat'+(v.turn===pi?' active':'')+(isYou?' you':'');
     var cap=(pi===v.captain)?'<span class="capmark">親</span> ':'';
     var det='<span class="detchip '+(p.detector?'avail':'used')+'">探知機 '+(p.detector?'●使用可':'✓使用済')+'</span>';
-    var rpm=connMap[pi];var conn=(rpm&&rpm.bot)?'<span class="discon">切断中</span>':'';
+    var rpm=connMap[pi];var conn='';
+    if(rpm&&rpm.bot)conn='<span class="discon">📶AI代行中</span>';
+    else if(rpm&&rpm.aiPending){
+      conn='<span class="discon">📶応答なし</span>';
+      if(!v.over&&canApproveAi())conn+=' <button style="font-size:11px;padding:2px 8px;border-radius:99px;cursor:pointer" '
+        +'onclick="approveAi('+pi+',\''+String(p.name).replace(/[\\'"<>]/g,'')+'\')">🤖 AIに代行させる</button>';
+    }
     seat.innerHTML='<div class="nm"><span class="nmL">'+cap+(isYou?('あなた（'+p.name+'）'):p.name)+det+conn+'</span><span class="muted">残り'+active+'</span></div>';
     var tw=document.createElement('div');tw.className='tiles';
     p.tiles.forEach(function(t,i){var tmp=document.createElement('div');tmp.innerHTML=tileHTML(t,isYou);var el=tmp.firstChild;
