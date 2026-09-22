@@ -1,4 +1,4 @@
-const C='bombbusters-v2';
+const C='bombbusters-v3';   // 2026-09-22 デザイン刷新で更新
 self.addEventListener('install',function(e){
   e.waitUntil(caches.open(C).then(function(c){return c.addAll(['./','./index.html','./online.html','./game_core.js','./manifest.webmanifest','./online.webmanifest','./icon-192.png']);}).catch(function(){}));
   self.skipWaiting();

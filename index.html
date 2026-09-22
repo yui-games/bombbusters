@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#1a2238">
+<meta name="theme-color" content="#0b1020">
 <link rel="apple-touch-icon" href="icon-180.png">
 <title>爆弾解除 ソロ補助ツール（4人卓）</title>
 <style>
@@ -183,12 +183,85 @@ body.skin-pop .prow{background:#262a34;}
 .eqchoices{display:flex;flex-wrap:wrap;gap:6px;}.eqchoices button{min-width:46px;}
 .eqchoices button.on{background:var(--gold);color:#fff;box-shadow:0 3px 0 #c9820f;}
 .eqchoices button.dim{opacity:.32;}
+
+/* ===== 作戦室スキン（既定・2026-09-22 デザイン刷新）。ロゴ・背景・タイル画像は assets/ ===== */
+body.skin-ops{--bg:#0b1020;--panel:#151c33;--panel2:#1b2340;--line:#2e3a5e;--gold:#ffc93c;--red:#ff4b5c;--blue:#4c8dff;--green:#3ddc84;--text:#e8edf5;--mut:#93a3bd;--ink:#ffffff;--dark:#0b1020;
+  background:#0b1020;color:var(--text);}
+html:has(body.skin-ops){background:#0b1020;}
+body.skin-ops::before{content:'';position:fixed;inset:0;z-index:-1;background:#0b1020 url('assets/bg.jpg') center top/cover no-repeat;}
+body.skin-ops #navbar{background:rgba(11,16,32,.86)!important;border-bottom-color:#2e3a5e!important;backdrop-filter:blur(4px);}
+body.skin-ops #navbar a{color:#e8edf5!important;background:rgba(255,255,255,.08)!important;border-color:#2e3a5e!important;}
+.ops-logo{display:none;}
+body.skin-ops .ops-logo{display:block;width:min(72vw,440px);margin:6px auto 2px;filter:drop-shadow(0 8px 18px rgba(0,0,0,.65));}
+body.skin-ops .ops-logo.small{width:min(46vw,260px);margin:2px auto 8px;}
+body.skin-ops .sidetitle{color:rgba(255,201,60,.32);text-shadow:0 0 18px rgba(255,201,60,.25);}
+body.skin-ops h1{color:#fff;}
+body.skin-ops .card{background:rgba(21,28,51,.90);border:2px solid #2e3a5e;box-shadow:0 3px 0 #070b16,0 10px 26px rgba(0,0,0,.5);}
+body.skin-ops .card h2{color:#fff;}
+body.skin-ops .tag{background:var(--gold);color:#1a1400;border-color:#d9a520;}
+body.skin-ops .tag.b{background:var(--blue);color:#fff;border-color:#2f6fd8;}body.skin-ops .tag.g{background:var(--green);color:#062a15;border-color:#22b86a;}
+body.skin-ops label{color:var(--mut);}
+body.skin-ops input,body.skin-ops select{background:#0f1529;color:#fff;border-color:#2e3a5e;}
+body.skin-ops input::placeholder{color:#6f7e9a;}
+body.skin-ops button{color:#1a1400;background:linear-gradient(#ffd45c,#f5b400);box-shadow:0 3px 0 #a87a00;}
+body.skin-ops button.sec{background:#1f2845;color:#fff;border:2px solid #2e3a5e;box-shadow:0 3px 0 #070b16;}
+body.skin-ops button.ghost{background:#121a30;color:var(--mut);border:2px solid #2e3a5e;box-shadow:none;}
+body.skin-ops button.blue{background:linear-gradient(#5d9bff,#3a7ae6);color:#fff;box-shadow:0 3px 0 #245bb8;}
+body.skin-ops button.danger{background:#2a1518;color:#ff8a8e;border:2px solid #ff4b5c;box-shadow:0 3px 0 #571f24;}
+body.skin-ops .kpis>div{background:#0f1529;border-color:#2e3a5e;}body.skin-ops .kpis .v{color:var(--gold);}
+body.skin-ops .seat{background:#111a33;border-color:#2e3a5e;}
+body.skin-ops .seat.you{background:#172448;border-color:var(--gold);}
+body.skin-ops .seat.active{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold) inset,0 0 16px rgba(255,201,60,.35);}
+body.skin-ops .capmark{color:#1a1400;}
+body.skin-ops .nm{color:#fff;}body.skin-ops .nmL{background:rgba(255,255,255,.08);}
+body.skin-ops .lt{color:#93a3bd;}
+/* コード（タイル）＝画像。数字はCSSで上に描く */
+body.skin-ops .tile{border:0;background:url('assets/tile_blue.png') center/100% 100% no-repeat;box-shadow:0 3px 8px rgba(0,0,0,.55);}
+body.skin-ops .tile.y{background-image:url('assets/tile_yellow.png');}
+body.skin-ops .tile.r{background-image:url('assets/tile_red.png');}
+body.skin-ops .tile.back{background:url('assets/tile_back.png') center/100% 100% no-repeat;border:0;}
+body.skin-ops .tile .big{font-size:22px;text-shadow:0 1px 0 rgba(0,0,0,.6),0 2px 6px rgba(0,0,0,.6);}
+body.skin-ops .tile.y .big,body.skin-ops .tile.r .big{font-size:18px;}
+body.skin-ops .tile.y .ysq,body.skin-ops .tile.r .bomb{display:none;}
+body.skin-ops .tile.cut{opacity:.28;filter:grayscale(.6);}
+body.skin-ops .tile.sel{outline:3px solid var(--gold);outline-offset:-3px;box-shadow:0 0 0 3px rgba(255,201,60,.35),0 3px 8px rgba(0,0,0,.55);}
+body.skin-ops .tk{background:#fff;color:#1a1400;border-color:#d9c37a;}
+body.skin-ops .declare{background:#0f1529;border-color:var(--blue);color:#fff;}body.skin-ops .declare b{color:var(--gold);}
+body.skin-ops .sect{border-top-color:#2e3a5e;}body.skin-ops .sect .t{color:var(--gold);}
+body.skin-ops .log{background:#0c1224;color:var(--text);}body.skin-ops .log div{border-bottom-color:#1f2a48;}
+body.skin-ops .log .me{color:var(--gold);}body.skin-ops .log .bad{color:#ff7a82;}body.skin-ops .log .ok{color:var(--green);}
+body.skin-ops .banner.win{background:#0f2a1c;border-color:var(--green);color:#7ce3a4;}
+body.skin-ops .banner.lose{background:#3a1418;border-color:var(--red);color:#ff8a8e;}
+body.skin-ops .pill{background:#121a30;border-color:#2e3a5e;color:var(--mut);}body.skin-ops .pill.on{background:var(--gold);color:#1a1400;border-color:#d9a520;}
+body.skin-ops .tnum{background:#0f1529;border-color:#2e3a5e;color:#fff;}body.skin-ops .tnum .d{color:var(--mut);}body.skin-ops .tnum .d b{color:var(--green);}
+body.skin-ops .tnum.locked{box-shadow:0 0 0 2px var(--red) inset;}
+body.skin-ops .pchip{background:#121a30;border-color:#2e3a5e;color:#fff;}body.skin-ops .pchip.cur{background:var(--gold);color:#1a1400;border-color:#d9a520;}
+body.skin-ops .pchip.lock{background:#2a1518;}
+body.skin-ops .detchip{background:#121a30;border-color:#2e3a5e;}body.skin-ops .detchip.avail{color:var(--green);border-color:var(--green);}
+body.skin-ops .myhandwrap{background:#172448;border-color:var(--gold);box-shadow:0 2px 0 #070b16;}
+body.skin-ops .myhandlabel{color:#fff;}
+body.skin-ops .muted,body.skin-ops .note,body.skin-ops .legend{color:var(--mut);}
+body.skin-ops .toastmsg{background:rgba(15,21,41,.95);border-color:rgba(255,201,60,.35);}
+body.skin-ops .eqbox{background:#151c33;border-color:#2e3a5e;color:var(--text);}body.skin-ops .eqtitle{color:#fff;}
+body.skin-ops #eqmodal,body.skin-ops #helpmodal{background:rgba(5,8,18,.7);}
+body.skin-ops .eqchoices button.on{background:var(--gold);color:#1a1400;box-shadow:0 3px 0 #a87a00;}
+body.skin-ops .prow{background:#111a33;border-color:#2e3a5e;color:#fff;}
+body.skin-ops .bigcode{background:#0f1529;color:var(--gold);border:2px solid #2e3a5e;}
+body.skin-ops .statusbar{color:#fff;}
+body.skin-ops .you-badge{color:#1a1400;}
+body.skin-ops .qrbox{background:#fff;border-color:#2e3a5e;}
+body.skin-ops .discon{background:#2a1518;}
+body.skin-ops .connbar{background:#3a1418;color:#ff8a8e;}
+/* 装備カードのアイコン */
+.eqic{display:none;}
+body.skin-ops .eqic{display:inline-block;width:22px;height:22px;object-fit:contain;vertical-align:-6px;margin-right:4px;filter:drop-shadow(0 1px 2px rgba(0,0,0,.5));}
 </style>
 </head>
-<body>
+<body class="skin-ops">
 <!--navbar-->
 <div id="navbar" style="position:relative;z-index:9999;display:flex;gap:8px;align-items:center;padding:7px 10px;background:var(--panel2,#fff2d6);border-bottom:1px solid var(--line,#ecd0a2);font-family:inherit"><a href="https://ryo5exeg-wq.github.io/ponzi/" style="display:inline-flex;align-items:center;gap:6px;text-decoration:none;background:var(--panel,#fff);border:1px solid var(--line,#ecd0a2);color:var(--text,#4d3f1f);border-radius:99px;padding:7px 14px;font-size:14px;font-weight:600;min-height:38px;box-sizing:border-box">🏠 <span>ゲーム一覧</span></a><span id="navSlot"></span></div>
 <div class="sidetitle left">BOMB BUSTERS</div><div class="sidetitle right">BOMB BUSTERS</div>
+<img class="ops-logo" src="assets/logo.png" alt="ボムバスターズ！">
 <div class="card" id="setupCard">
   <h2><span class="tag">セットアップ</span></h2>
   <div class="row" style="margin-top:8px">
@@ -271,10 +344,11 @@ function applyDisp(){var on=false;try{on=localStorage.getItem('bb_disp')==='tab'
  document.body.classList.toggle('disp-tab',on);
  var b=document.getElementById('dispBtn');if(b)b.textContent=on?'🖥️PC表示に戻す':'📱配信用(縦長)';}
 function toggleDisp(){try{localStorage.setItem('bb_disp',localStorage.getItem('bb_disp')==='tab'?'pc':'tab');}catch(e){}applyDisp();}
-function applySkin(){var on=false;try{on=localStorage.getItem('bb_skin')==='pop';}catch(e){}
- document.body.classList.toggle('skin-pop',on);
- var b=document.getElementById('skinBtn');if(b)b.textContent=on?'🎨通常配色':'🎨配信スキン';}
-function toggleSkin(){try{localStorage.setItem('bb_skin',localStorage.getItem('bb_skin')==='pop'?'std':'pop');}catch(e){}applySkin();}
+var EQ_ICON={reveal:'icon_memo',super:'icon_detector',dochi:'icon_goggles',extra:'icon_coffee'};function eqIconHTML(kind){return EQ_ICON[kind]?'<img class="eqic" src="assets/'+EQ_ICON[kind]+'.png" alt="">':'';}
+function applySkin(){var s='ops';try{s=localStorage.getItem('bb_skin')||'ops';}catch(e){}if(['ops','pop','std'].indexOf(s)<0)s='ops';
+ document.body.classList.toggle('skin-ops',s==='ops');document.body.classList.toggle('skin-pop',s==='pop');
+ var b=document.getElementById('skinBtn');if(b)b.textContent='🎨配色：'+({ops:'作戦室',pop:'配信',std:'クラシック'})[s];}
+function toggleSkin(){var s='ops';try{s=localStorage.getItem('bb_skin')||'ops';}catch(e){}var next={ops:'pop',pop:'std',std:'ops'}[s]||'ops';try{localStorage.setItem('bb_skin',next);}catch(e){}applySkin();}
 applySkin();
 /* PWA: https配信時のみService Worker登録（最新優先・オフライン時キャッシュ） */
 if('serviceWorker' in navigator && location.protocol==='https:'){try{navigator.serviceWorker.register('sw.js');}catch(e){}}
@@ -444,7 +518,7 @@ function render(){
   // equip
   const ew=g('equip');ew.innerHTML='';
   if(S.equip.length===0){ew.innerHTML='<div class="muted">装備なし</div>';}
-  else{const er=document.createElement('div');er.className='btnrow';S.equip.forEach((e,i)=>{var locked=(e.kind==='himitsu')?(S.yCut<=0):(cutBlue(e.num)<2);var usable=!(e.used||locked);const b=document.createElement('button');b.className=usable?'sec':'ghost';b.style.minWidth='150px';b.textContent=((e.kind==='himitsu')?e.name:('['+e.num+'] '+e.name))+(e.used?' ✓':(locked?' 🔒':' ?'));b.title=usable?'':((e.kind==='himitsu')?'黄コードを切断すると解放（タップで効果）':('数字'+e.num+'のペアが切られると解放（タップで効果）'));b.onclick=usable?(function(j){return function(){useEquip(j);};})(i):(function(k){return function(){showEqHelp(k);};})(e.kind);er.appendChild(b);});ew.appendChild(er);}
+  else{const er=document.createElement('div');er.className='btnrow';S.equip.forEach((e,i)=>{var locked=(e.kind==='himitsu')?(S.yCut<=0):(cutBlue(e.num)<2);var usable=!(e.used||locked);const b=document.createElement('button');b.className=usable?'sec':'ghost';b.style.minWidth='150px';b.innerHTML=eqIconHTML(e.kind)+((e.kind==='himitsu')?e.name:('['+e.num+'] '+e.name))+(e.used?' ✓':(locked?' 🔒':' ?'));b.title=usable?'':((e.kind==='himitsu')?'黄コードを切断すると解放（タップで効果）':('数字'+e.num+'のペアが切られると解放（タップで効果）'));b.onclick=usable?(function(j){return function(){useEquip(j);};})(i):(function(k){return function(){showEqHelp(k);};})(e.kind);er.appendChild(b);});ew.appendChild(er);}
 }
 
 /* ===== 配信用演出（効果音=Web Audio合成・映像=フラッシュ/シェイク/パーティクル） ===== */
